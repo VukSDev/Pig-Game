@@ -1,13 +1,13 @@
 /*
-GAME RULES:
+PIG GAME RULES:
 - The game has 2 players, playing in rounds
 - In each turn, a player rolls a dice as many times as he whishes. Each result get added to his ROUND score
 - BUT, if the player rolls a 1, all his ROUND score gets lost. After that, it's the next player's turn
 - The player can choose to 'Hold', which means that his ROUND score gets added to his GLOBAL score. After that, it's the next player's turn
-- The first player to reach 100 points on GLOBAL score wins the game
+- The first player to reach X points on GLOBAL score wins the game
 */
 
-var scores, roundScore, activePlayer, player1name, player2name, gamePlaying, winScore;
+var scores, roundScore, activePlayer, player1name, player2name, gamePlaying, lastDice1, lastDice2;
 
 player1name = 'Player 1';
 player2name = 'Player 2';
@@ -17,22 +17,47 @@ init();
 document.querySelector('.btn-roll').addEventListener('click', function() {
   if(gamePlaying) {
     // 1. Random number
-    var dice = Math.floor((Math.random() * 6) + 1);
+    var dice1 = Math.floor((Math.random() * 6) + 1);
+    var dice2 = Math.floor((Math.random() * 6) + 1);
 
     // 2. Display the result
-    var diceDOM = document.querySelector('.dice');
-    diceDOM.style.display = 'block';
-    diceDOM.src = 'dice-' + dice + '.png';
+    document.getElementById('dice-1').style.display = 'block';
+    document.getElementById('dice-2').style.display = 'block';
+    document.getElementById('dice-1').src = 'dice-' + dice1 + '.png';
+    document.getElementById('dice-2').src = 'dice-' + dice2 + '.png';
 
-    // 3. Update the round score IF the rolled number was NOT a 1
-    if(dice !== 1) {
+    if (dice1 !== 1 && dice2 !== 1) {
       // Add score
-      roundScore += dice;
+      roundScore += (dice1 + dice2);
       document.querySelector('#current-' + activePlayer).textContent = roundScore;
     } else {
       // Next player
       nextPlayer();
+      document.querySelector('.dice-err1').style.display = 'block';
+      setTimeout(function() {document.querySelector('.dice-err1').style.display = 'none';}, 500);
     }
+
+    // // 3. Update the round score IF the rolled number was NOT a 1
+    // if (lastDice1 === 6 && dice1 === 6 || lastDice2 === 6 && dice2 === 6) {
+    //   // Player loses score
+    //   scores[activePlayer] = 0;
+    //   document.querySelector('#score-' + activePlayer).textContent = '0';
+    //   nextPlayer();
+    //   document.querySelector('.dice-err6x2').style.display = 'block';
+    //   setTimeout(function() {document.querySelector('.dice-err6x2').style.display = 'none';}, 500);
+    // } else if (dice1 !== 1 && dice2 !== 1) {
+    //   // Add score
+    //   roundScore += (dice1 + dice2);
+    //   document.querySelector('#current-' + activePlayer).textContent = roundScore;
+    // } else {
+    //   // Next player
+    //   nextPlayer();
+    //   document.querySelector('.dice-err1').style.display = 'block';
+    //   setTimeout(function() {document.querySelector('.dice-err1').style.display = 'none';}, 500);
+    // }
+    //
+    // lastDice1 = dice1;
+    // lastDice2 = dice2;
   }
 });
 
@@ -44,10 +69,22 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
     // Update the UI
     document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
 
+    var input = document.querySelector('.final-score').value;
+    var winningScore;
+
+    // Undefined, 0, null or '' are COERCED to false
+    // Anything else is COERCED to true
+    if(input) {
+      winningScore = input;
+    } else {
+      winningScore = 100;
+    }
+
     // Check if player won the game
-    if (scores[activePlayer] >= winScore) {
+    if (scores[activePlayer] >= winningScore) {
       document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
-      document.querySelector('.dice').style.display = 'none';
+      document.getElementById('dice-1').style.display = 'none';
+      document.getElementById('dice-2').style.display = 'none';
       document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
       document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
       gamePlaying = false;
@@ -60,6 +97,8 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
 function nextPlayer() {
   activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
   roundScore = 0;
+  lastDice1 = null;
+  lastDice2 = null;
 
   document.getElementById('current-0').textContent = '0';
   document.getElementById('current-1').textContent = '0';
@@ -70,7 +109,8 @@ function nextPlayer() {
   // document.querySelector('.player-0-panel').classList.remove('active');
   // document.querySelector('.player-1-panel').classList.add('active');
 
-  document.querySelector('.dice').style.display = 'none';
+  document.getElementById('dice-1').style.display = 'none';
+  document.getElementById('dice-2').style.display = 'none';
 }
 
 document.querySelector('.btn-new').addEventListener('click', init);
@@ -79,10 +119,14 @@ function init() {
     scores = [0, 0];
     activePlayer = 0;
     roundScore = 0;
-    winScore = 50;
     gamePlaying = true;
+    lastDice1 = null;
+    lastDice2 = null;
 
-    document.querySelector('.dice').style.display = 'none';
+    document.getElementById('dice-1').style.display = 'none';
+    document.getElementById('dice-2').style.display = 'none';
+    document.querySelector('.dice-err1').style.display = 'none';
+    document.querySelector('.dice-err6x2').style.display = 'none';
 
     document.getElementById('score-1').textContent = '0';
     document.getElementById('score-0').textContent = '0';
@@ -121,11 +165,3 @@ document.querySelector('#name-1').addEventListener('click', function() {
     document.getElementById('name-1').textContent = player2name;
   }
 });
-
-// dice = Math.floor(Math.random() * 6) + 1; // we call this on button click
-
-// document.querySelector('#current-' + activePlayer).textContent = dice;
-// document.querySelector('#current-' + activePlayer).innerHTML = '<em>' + dice + '</em>';
-
-// var x = document.querySelector('#score-0').textContent;
-// console.log(x);

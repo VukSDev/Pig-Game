@@ -144,11 +144,68 @@ i {
 
 .dice {
     position: absolute;
-    left: 50%;
-    top: 178px;
+    top: 220px;
     transform: translateX(-50%);
-    height: 100px;
+    height: 80px;
     box-shadow: 0px 10px 60px rgba(0, 0, 0, 0.10);
+}
+
+#dice-1 {
+  left: 45%;
+}
+
+#dice-2 {
+  left: 55%;
+}
+
+.dice-err1 {
+    position: absolute;
+    left: 50%;
+    top: 220px;
+    transform: translateX(-50%);
+    height: 80px;
+    box-shadow: 0px 0px 20px rgba(235, 77, 77, 1);
+    opacity: 0;
+    animation: fade .5s linear;
+}
+
+.dice-err6x2 {
+    position: absolute;
+    left: 50%;
+    top: 180px;
+    font-size: 25px;
+    transform: translateX(-50%);
+    opacity: 0;
+    animation: fade .5s linear;
+}
+
+.dice-err6x2 img {
+  height: 40px;
+  box-shadow: 0px 0px 20px rgba(235, 77, 77, 1);
+  margin-left: 10px;
+}
+
+@keyframes fade {
+  from {opacity: 1;}
+  to {opacity: 0;}
+}
+
+.final-score {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 520px;
+  color: #555;
+  font-size: 18px;
+  font-family: 'Lato';
+  text-align: center;
+  padding: 10px;
+  width: 160px;
+  text-transform: uppercase;
+}
+
+.final-score:focus {
+  outline: none;
 }
 
 .winner { background-color: #f7f7f7; }
